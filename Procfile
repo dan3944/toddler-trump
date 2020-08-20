@@ -1,1 +1,1 @@
-worker: python prefixer.py
+web: python prefixer.py
