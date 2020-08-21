@@ -22,6 +22,8 @@ api = tweepy.API(auth)
 
 class UserListener(tweepy.StreamListener):
     def on_status(self, status):
+        status = status.text
+    
         if status.startswith('RT @'):
             return  # skip retweets
 
@@ -41,9 +43,9 @@ class UserListener(tweepy.StreamListener):
             print("Couldn't tweet - length", len(toddler))
             print(toddler)
     
-    # def on_error(self, status_code):
-    #     print('***ERROR: Status Code', status_code)
-    #     return True
+    def on_error(self, status_code):
+        print('***ERROR: Status Code', status_code)
+        return True
 
 
 # def reset_rules(from_='realDonaldTrump'):
