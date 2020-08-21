@@ -79,6 +79,8 @@ def run(handle):
         print('SLEEPING 30 SECONDS')
         time.sleep(30)
 
+print('*' * 80)
+print(__name__)
 
 if __name__ == '__main__':
     import sys
