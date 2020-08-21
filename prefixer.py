@@ -1,7 +1,6 @@
 import json
 import os
 import requests
-import sys
 import time
 import tweepy
 
@@ -46,8 +45,6 @@ def stream_tweets():
 
             if json_response.get('title') == 'ConnectionException':
                 print(json_response)
-                print('SLEEPING 30 SECONDS')
-                time.sleep(30)
                 return True
 
             print('\nTrump tweet:', line)
@@ -77,10 +74,7 @@ def stream_tweets():
             print(e)
 
 
-if __name__ == '__main__':
-    handle = sys.argv[1] if len(sys.argv) >= 2 else 'realDonaldTrump'
-    print('Handle:', handle)
-    reset_rules(handle)
-    
+def run(handle):
     while stream_tweets():
-        pass
+        print('SLEEPING 30 SECONDS')
+        time.sleep(30)
