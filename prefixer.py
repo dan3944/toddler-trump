@@ -45,7 +45,7 @@ def stream_tweets():
             trump = json.loads(line)['data']['text']
 
             if trump.startswith('RT @'):
-                continue  # skip retweets
+                continue # skip retweets
 
             if trump.isupper():
                 toddler = 'MOMMY, ' + trump
