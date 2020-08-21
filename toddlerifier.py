@@ -64,10 +64,8 @@ if __name__ == '__main__':
     handle = sys.argv[1] if len(sys.argv) >= 2 else 'realDonaldTrump'
     print('Handle:', handle)
     user_id = api.lookup_users(screen_names=[handle])[0].id_str
+    print('Starting stream for user_id', user_id)
 
     tweepy \
         .Stream(auth=api.auth, listener=UserListener(handle)) \
         .filter(follow=[user_id])
-
-# heroku ps:scale worker=0
-# heroku ps:scale web=0
