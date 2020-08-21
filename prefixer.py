@@ -122,5 +122,5 @@ if __name__ == '__main__':
     user_id = api.lookup_users(screen_names=[handle])[0].id_str
 
     tweepy \
-        .Stream(auth=api.auth, listener=UserListener()) \
+        .Stream(auth=api.auth, listener=UserListener(handle)) \
         .filter(follow=[user_id])
