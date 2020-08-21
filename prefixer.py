@@ -78,7 +78,7 @@ def stream_tweets():
 if __name__ == '__main__':
     handle = sys.argv[1] if len(sys.argv) >= 2 else 'realDonaldTrump'
     print('Handle:', handle)
-    prefixer.reset_rules(handle)
+    reset_rules(handle)
 
     while stream_tweets():
         print('SLEEPING 30 SECONDS')
