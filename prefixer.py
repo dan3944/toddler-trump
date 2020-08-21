@@ -1,6 +1,7 @@
 import json
 import os
 import requests
+import sys
 import time
 import tweepy
 
@@ -74,19 +75,11 @@ def stream_tweets():
             print(e)
 
 
-def run(handle):
+if __name__ == '__main__':
+    handle = sys.argv[1] if len(sys.argv) >= 2 else 'realDonaldTrump'
+    print('Handle:', handle)
+    prefixer.reset_rules(handle)
+
     while stream_tweets():
         print('SLEEPING 30 SECONDS')
         time.sleep(30)
-
-print('*' * 80)
-print(__name__)
-
-if __name__ == '__main__':
-    import sys
-    handle = sys.argv[1] if len(sys.argv) >= 2 else 'realDonaldTrump'
-    print('Handle:', handle)
-
-    prefixer.reset_rules(handle)
-    prefixer.run(handle)
-
