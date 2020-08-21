@@ -4,13 +4,8 @@ import tweepy
 import urllib.parse
 
 
-API_KEY = os.environ['API_KEY']
-API_KEY_SECRET = os.environ['API_KEY_SECRET']
-ACCESS_TOKEN = os.environ['ACCESS_TOKEN']
-ACCESS_TOKEN_SECRET = os.environ['ACCESS_TOKEN_SECRET']
-
-auth = tweepy.OAuthHandler(API_KEY, API_KEY_SECRET)
-auth.set_access_token(ACCESS_TOKEN, ACCESS_TOKEN_SECRET)
+auth = tweepy.OAuthHandler(os.environ['API_KEY'], os.environ['API_KEY_SECRET'])
+auth.set_access_token(os.environ['ACCESS_TOKEN'], os.environ['ACCESS_TOKEN_SECRET'])
 api = tweepy.API(auth)
 
 
@@ -27,11 +22,10 @@ class UserListener(tweepy.StreamListener):
     
         if status.text.startswith('RT @') or is_url(status.text):
             print('Skipping')
-            return
-
-        toddler = toddlerify(status.text)
-        print('Tweeting:', toddler)
-        api.update_status(toddler)
+        else:
+            toddler = toddlerify(status.text)
+            print('Tweeting:', toddler)
+            api.update_status(toddler)
     
     def on_error(self, status_code):
         print('\n***ERROR: Status Code', status_code)
