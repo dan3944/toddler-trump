@@ -26,7 +26,7 @@ class UserListener(tweepy.StreamListener):
     
         if status.startswith('RT @'):
             print('Retweet - skipping')
-            return # skip retweets
+            return  # skip retweets
 
         if status.isupper():
             toddler = 'MOMMY, ' + status
@@ -57,3 +57,6 @@ if __name__ == '__main__':
     tweepy \
         .Stream(auth=api.auth, listener=UserListener(handle)) \
         .filter(follow=[user_id])
+
+# heroku ps:scale worker=0
+# heroku ps:scale web=0
