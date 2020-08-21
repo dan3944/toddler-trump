@@ -30,7 +30,7 @@ class UserListener(tweepy.StreamListener):
             return
 
         print(status.text)
-        print('Retweeted:', status.retweeted)
+        print('Retweeted:', status.retweeted, status.startswith('RT @'))
         status = status.text
     
         if status.startswith('RT @'):
