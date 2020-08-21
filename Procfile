@@ -1,1 +1,1 @@
-worker: python prefixer.py realDonaldTrump
+worker: python toddlerifier.py

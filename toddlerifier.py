@@ -23,28 +23,15 @@ class UserListener(tweepy.StreamListener):
         if status.user.screen_name != self.user:
             return
 
-        status = status.text
-        print('\n', status)
+        print('\n', status.text)
     
-        if status.startswith('RT @') or is_url(status):
+        if status.text.startswith('RT @') or is_url(status.text):
             print('Skipping')
             return
 
-        if status.isupper():
-            toddler = 'MOMMY, ' + status
-
-            if len(toddler) <= 271:
-                toddler += ' WAAAHHH!'
-
-        else:
-            toddler = 'Mommy, ' + status[0].lower() + status[1:]
-
-        if len(toddler) <= 280:
-            print('Tweeting:', toddler)
-            api.update_status(toddler)
-        else:
-            print("Couldn't tweet - length", len(toddler))
-            print(toddler)
+        toddler = toddlerify(status.text)
+        print('Tweeting:', toddler)
+        api.update_status(toddler)
     
     def on_error(self, status_code):
         print('\n***ERROR: Status Code', status_code)
@@ -57,6 +44,20 @@ def is_url(string):
         return all([result.scheme, result.netloc, result.path])
     except:
         return False
+
+
+def toddlerify(string):
+    words = string.split()
+
+    if words[0].isupper():
+        toddler = 'MOMMY, ' + string
+    else:
+        toddler = 'Mommy, ' + string[0].lower() + string[1:]
+    
+    if words[-1].isupper() and len(toddler) <= 271:
+        toddler += ' WAAAHHH!'
+
+    return toddler[:280]
 
 
 if __name__ == '__main__':
