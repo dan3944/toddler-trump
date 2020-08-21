@@ -22,6 +22,7 @@ api = tweepy.API(auth)
 
 class UserListener(tweepy.StreamListener):
     def __init__(self, user):
+        super(MyStreamListener, self).__init__()
         self.user = user
 
     def on_status(self, status):
