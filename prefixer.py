@@ -21,10 +21,15 @@ api = tweepy.API(auth)
 
 
 class UserListener(tweepy.StreamListener):
-    def on_status(self, status):
-        print(status.user, status.retweeted)
-        return
+    def __init__(self, user):
+        self.user = user
 
+    def on_status(self, status):
+        if status.user.screen_name != self.user:
+            return
+
+        print(status.text)
+        print('Retweeted:', status.retweeted)
         status = status.text
     
         if status.startswith('RT @'):
