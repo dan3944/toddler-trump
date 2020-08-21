@@ -9,77 +9,108 @@ API_KEY = os.environ['API_KEY']
 API_KEY_SECRET = os.environ['API_KEY_SECRET']
 ACCESS_TOKEN = os.environ['ACCESS_TOKEN']
 ACCESS_TOKEN_SECRET = os.environ['ACCESS_TOKEN_SECRET']
-BEARER_TOKEN = os.environ['BEARER_TOKEN']
+# BEARER_TOKEN = os.environ['BEARER_TOKEN']
 
-headers = {"Authorization": f"Bearer {BEARER_TOKEN}"}
+# headers = {"Authorization": f"Bearer {BEARER_TOKEN}"}
 
 auth = tweepy.OAuthHandler(API_KEY, API_KEY_SECRET)
 auth.set_access_token(ACCESS_TOKEN, ACCESS_TOKEN_SECRET)
 api = tweepy.API(auth)
 
-URL = "https://api.twitter.com/2/tweets/search/stream"
+# URL = "https://api.twitter.com/2/tweets/search/stream"
 
 
-def reset_rules(from_='realDonaldTrump'):
-    rules = requests.get(f"{URL}/rules", headers=headers).json()
+class UserListener(tweepy.StreamListener):
+    def on_status(self, status):
+        if status.startswith('RT @'):
+            return  # skip retweets
 
-    if rules is None or "data" not in rules:
-        return
+        if status.isupper():
+            toddler = 'MOMMY, ' + status
 
-    payload = {"delete": {"ids": [rule["id"] for rule in rules["data"]]}}
-    requests.post(f"{URL}/rules", headers=headers, json=payload)
+            if len(toddler) <= 271:
+                toddler += ' WAAAHHH!'
 
-    payload = {"add": [{"value": f"from:{from_}"}]}
-    requests.post(f"{URL}/rules", headers=headers, json=payload)
+        else:
+            toddler = 'Mommy, ' + status[0].lower() + status[1:]
+
+        if len(toddler) <= 280:
+            print('Tweeting:', toddler)
+            api.update_status(toddler)
+        else:
+            print("Couldn't tweet - length", len(toddler))
+            print(toddler)
+    
+    def on_error(self, status_code):
+        print('***ERROR: Status Code', status_code)
+        return True
 
 
-def stream_tweets():
-    response = requests.get(URL, headers=headers, stream=True)
-    print('Starting stream')
+# def reset_rules(from_='realDonaldTrump'):
+#     rules = requests.get(f"{URL}/rules", headers=headers).json()
 
-    for line in response.iter_lines():
-        if not line:
-            continue
+#     if rules is None or "data" not in rules:
+#         return
 
-        try:
-            json_response = json.loads(line)
+#     payload = {"delete": {"ids": [rule["id"] for rule in rules["data"]]}}
+#     requests.post(f"{URL}/rules", headers=headers, json=payload)
 
-            if json_response.get('title') == 'ConnectionException':
-                print(json_response)
-                return True
+#     payload = {"add": [{"value": f"from:{from_}"}]}
+#     requests.post(f"{URL}/rules", headers=headers, json=payload)
 
-            print('\nTrump tweet:', line)
-            trump = json_response['data']['text']
 
-            if trump.startswith('RT @'):
-                continue  # skip retweets
+# def stream_tweets():
+    # response = requests.get(URL, headers=headers, stream=True)
+    # print('Starting stream')
 
-            if trump.isupper():
-                toddler = 'MOMMY, ' + trump
+    # for line in response.iter_lines():
+    #     if not line:
+    #         continue
 
-                if len(toddler) <= 271:
-                    toddler += ' WAAAHHH!'
+    #     try:
+    #         json_response = json.loads(line)
 
-            else:
-                toddler = 'Mommy, ' + trump[0].lower() + trump[1:]
+    #         if json_response.get('title') == 'ConnectionException':
+    #             print(json_response)
+    #             return True
 
-            if len(toddler) <= 280:
-                print('Tweeting:', toddler)
-                api.update_status(toddler)
-            else:
-                print("Couldn't tweet - length", len(toddler))
-                print(toddler)
+    #         print('\nTrump tweet:', line)
+    #         trump = json_response['data']['text']
 
-        except Exception as e:
-            print('\n***Exception')
-            print(e)
+    #         if trump.startswith('RT @'):
+    #             continue  # skip retweets
+
+    #         if trump.isupper():
+    #             toddler = 'MOMMY, ' + trump
+
+    #             if len(toddler) <= 271:
+    #                 toddler += ' WAAAHHH!'
+
+    #         else:
+    #             toddler = 'Mommy, ' + trump[0].lower() + trump[1:]
+
+    #         if len(toddler) <= 280:
+    #             print('Tweeting:', toddler)
+    #             api.update_status(toddler)
+    #         else:
+    #             print("Couldn't tweet - length", len(toddler))
+    #             print(toddler)
+
+    #     except Exception as e:
+    #         print('\n***Exception')
+    #         print(e)
 
 
 if __name__ == '__main__':
     handle = sys.argv[1] if len(sys.argv) >= 2 else 'realDonaldTrump'
     print('Handle:', handle)
-    reset_rules(handle)
+    # reset_rules(handle)
 
-    while stream_tweets():
-        print('SLEEPING 30 SECONDS')
-        time.sleep(30)
+    # while stream_tweets():
+    #     print('SLEEPING 30 SECONDS')
+    #     time.sleep(30)
+    user_id = api.lookup_users(screen_names=[handle])[0].id_str
+
+    tweepy \
+        .Stream(auth=api.auth, listener=UserListener) \
+        .filter(follow=[user_id])
