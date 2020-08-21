@@ -2,6 +2,7 @@ import json
 import os
 import requests
 import sys
+import time
 import tweepy
 
 API_KEY = os.environ['API_KEY']
@@ -41,8 +42,16 @@ def stream_tweets():
             continue
 
         try:
+            json_response = json.loads(line)
+
+            if json_response.get('title') == 'ConnectionException':
+                print(json_response)
+                print('SLEEPING 30 SECONDS')
+                time.sleep(30)
+                return True
+
             print('\nTrump tweet:', line)
-            trump = json.loads(line)['data']['text']
+            trump = json_response['data']['text']
 
             if trump.startswith('RT @'):
                 continue # skip retweets
@@ -72,4 +81,6 @@ if __name__ == '__main__':
     handle = sys.argv[1] if len(sys.argv) >= 2 else 'realDonaldTrump'
     print('Handle:', handle)
     reset_rules(handle)
-    stream_tweets()
+    
+    while stream_tweets():
+        pass
