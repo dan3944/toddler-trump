@@ -26,7 +26,7 @@ class UserListener(tweepy.StreamListener):
     
         if status.startswith('RT @'):
             print('Retweet - skipping')
-            return # skip retweets
+            return  # skip retweets
 
         if status.isupper():
             toddler = 'MOMMY, ' + status
