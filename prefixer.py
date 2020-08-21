@@ -41,9 +41,9 @@ class UserListener(tweepy.StreamListener):
             print("Couldn't tweet - length", len(toddler))
             print(toddler)
     
-    def on_error(self, status_code):
-        print('***ERROR: Status Code', status_code)
-        return True
+    # def on_error(self, status_code):
+    #     print('***ERROR: Status Code', status_code)
+    #     return True
 
 
 # def reset_rules(from_='realDonaldTrump'):
@@ -110,6 +110,8 @@ if __name__ == '__main__':
     #     print('SLEEPING 30 SECONDS')
     #     time.sleep(30)
     user_id = api.lookup_users(screen_names=[handle])[0].id_str
+
+    print('user_id', user_id)
 
     tweepy \
         .Stream(auth=api.auth, listener=UserListener) \
