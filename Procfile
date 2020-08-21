@@ -1,1 +1,1 @@
-web: python prefixer.py fakedon29068795
+worker: python prefixer.py fakedon29068795
