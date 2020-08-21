@@ -1,6 +1,8 @@
 import os
 import sys
 import tweepy
+import urllib.parse
+
 
 API_KEY = os.environ['API_KEY']
 API_KEY_SECRET = os.environ['API_KEY_SECRET']
@@ -24,9 +26,9 @@ class UserListener(tweepy.StreamListener):
         status = status.text
         print('\n', status)
     
-        if status.startswith('RT @'):
-            print('Retweet - skipping')
-            return  # skip retweets
+        if status.startswith('RT @') or is_url(status):
+            print('Skipping')
+            return
 
         if status.isupper():
             toddler = 'MOMMY, ' + status
@@ -47,6 +49,14 @@ class UserListener(tweepy.StreamListener):
     def on_error(self, status_code):
         print('\n***ERROR: Status Code', status_code)
         return True
+
+
+def is_url(string):
+    try:
+        result = urllib.parse.urlparse(string.strip())
+        return all([result.scheme, result.netloc, result.path])
+    except:
+        return False
 
 
 if __name__ == '__main__':
