@@ -18,7 +18,7 @@ class UserListener(tweepy.StreamListener):
         if status.user.screen_name != self.user:
             return
         
-        text = status.extended_tweet.full_text if status.truncated else status.text
+        text = status.extended_tweet['full_text'] if status.truncated else status.text
 
         # status.is_quote_tweet
         # status.quoted_status_id
