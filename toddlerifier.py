@@ -17,19 +17,29 @@ class UserListener(tweepy.StreamListener):
     def on_status(self, status):
         if status.user.screen_name != self.user:
             return
+        
+        text = status.extended_tweet.full_text if status.truncated else status.text
 
-        print()
-        for key, val in sorted(status.__dict__.items()):
-            print(key, val)
+        # status.is_quote_tweet
+        # status.quoted_status_id
+        # status.quoted_status_permalink.url
 
-        # print('\n', status.text)
+        # print()
+        # for key, val in sorted(status.__dict__.items()):
+        #     print(key, val)
+
+        print('\n', text)
     
-        # if status.text.startswith('RT @') or is_url(status.text):
-        #     print('Skipping')
-        # else:
-        #     toddler = toddlerify(status.text)
-        #     print('Tweeting:', toddler)
-        #     api.update_status(toddler)
+        if text.startswith('RT @') or is_url(text):
+            print('Skipping')
+        else:
+            toddler = toddlerify(status.text)
+
+            if status.is_quote_tweet:
+                toddler += status.quoted_status_permalink
+
+            print('Tweeting:', toddler)
+            api.update_status(toddler)
 
     def on_error(self, status_code):
         print('\n***ERROR: Status Code', status_code)
