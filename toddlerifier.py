@@ -18,15 +18,19 @@ class UserListener(tweepy.StreamListener):
         if status.user.screen_name != self.user:
             return
 
-        print('\n', status.text)
+        print()
+        for key, val in sorted(status.__dict__.items()):
+            print(key, val)
+
+        # print('\n', status.text)
     
-        if status.text.startswith('RT @') or is_url(status.text):
-            print('Skipping')
-        else:
-            toddler = toddlerify(status.text)
-            print('Tweeting:', toddler)
-            api.update_status(toddler)
-    
+        # if status.text.startswith('RT @') or is_url(status.text):
+        #     print('Skipping')
+        # else:
+        #     toddler = toddlerify(status.text)
+        #     print('Tweeting:', toddler)
+        #     api.update_status(toddler)
+
     def on_error(self, status_code):
         print('\n***ERROR: Status Code', status_code)
         return True
