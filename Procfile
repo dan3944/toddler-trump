@@ -1,1 +1,1 @@
-worker: python toddlerifier.py fakedon29068795
+worker: python toddlerifier.py
