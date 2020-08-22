@@ -26,9 +26,9 @@ class UserListener(tweepy.StreamListener):
         else:
             toddler = toddlerify(text)
 
-            if status.is_quote_status \
-                    and len(toddler + ' ' + status.quoted_status_permalink['url']) <= 280:
-                toddler += ' ' + status.quoted_status_permalink['url']
+            if status.is_quote_status:
+                max_len = 279 - len(status.quoted_status_permalink['url'])
+                toddler = toddler[:max_len] + ' ' + status.quoted_status_permalink['url']
 
             print('Tweeting:', toddler)
             api.update_status(toddler)
@@ -64,8 +64,13 @@ if __name__ == '__main__':
     handle = sys.argv[1] if len(sys.argv) >= 2 else 'realDonaldTrump'
     print('Handle:', handle)
     user_id = api.lookup_users(screen_names=[handle])[0].id_str
-    print('Starting stream for user_id', user_id)
 
-    tweepy \
-        .Stream(auth=api.auth, listener=UserListener(handle)) \
-        .filter(follow=[user_id])
+    while True:
+        print('Starting stream for user_id', user_id)
+
+        try:
+            tweepy \
+                .Stream(auth=api.auth, listener=UserListener(handle)) \
+                .filter(follow=[user_id])
+        except Exception as e:
+            print('\n***Exception', e)
