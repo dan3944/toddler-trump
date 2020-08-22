@@ -19,24 +19,15 @@ class UserListener(tweepy.StreamListener):
             return
         
         text = status.extended_tweet['full_text'] if status.truncated else status.text
-
-        # status.is_quote_tweet
-        # status.quoted_status_id
-        # status.quoted_status_permalink.url
-
-        # print()
-        # for key, val in sorted(status.__dict__.items()):
-        #     print(key, val)
-
         print('\n', text)
-        print('')
     
         if text.startswith('RT @') or is_url(text):
             print('Skipping')
         else:
             toddler = toddlerify(text)
 
-            if status.is_quote_status:
+            if status.is_quote_status \
+                    and len(toddler + ' ' + status.quoted_status_permalink['url']) <= 280:
                 toddler += ' ' + status.quoted_status_permalink['url']
 
             print('Tweeting:', toddler)
@@ -66,7 +57,7 @@ def toddlerify(string):
     if words[-1].isupper() and len(toddler) <= 271:
         toddler += ' WAAAHHH!'
 
-    return toddler[:280]
+    return toddler.rstrip()[:280]
 
 
 if __name__ == '__main__':
