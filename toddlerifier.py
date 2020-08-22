@@ -11,13 +11,13 @@ api = tweepy.API(auth)
 
 class UserListener(tweepy.StreamListener):
     def __init__(self, user):
-        super(UserListener, self).__init__()
+        super().__init__()
         self.user = user
 
     def on_status(self, status):
         if status.user.screen_name != self.user:
             return
-        
+
         text = status.extended_tweet['full_text'] if status.truncated else status.text
         print('\n', text)
     
@@ -27,8 +27,8 @@ class UserListener(tweepy.StreamListener):
             toddler = toddlerify(text)
 
             if status.is_quote_status:
-                max_len = 279 - len(status.quoted_status_permalink['url'])
-                toddler = toddler[:max_len] + ' ' + status.quoted_status_permalink['url']
+                suffix = ' ' + status.quoted_status_permalink['url']
+                toddler = toddler[: 280 - len(suffix)] + suffix
 
             print('Tweeting:', toddler)
             api.update_status(toddler)
@@ -40,9 +40,9 @@ class UserListener(tweepy.StreamListener):
 
 def is_url(string):
     try:
-        result = urllib.parse.urlparse(string.strip())
-        return all([result.scheme, result.netloc, result.path])
-    except:
+        parsed = urllib.parse.urlparse(string.strip())
+        return parsed.scheme and parsed.netloc and parsed.path
+    except ValueError:
         return False
 
 
