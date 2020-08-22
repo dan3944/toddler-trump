@@ -21,7 +21,7 @@ class UserListener(tweepy.StreamListener):
         text = status.extended_tweet['full_text'] if status.truncated else status.text
         print('\n', text)
     
-        if text.startswith('RT @') or is_url(text):
+        if text.startswith('RT @') or is_url(text) or status.in_reply_to_status_id:
             print('Skipping')
         else:
             toddler = toddlerify(text)
