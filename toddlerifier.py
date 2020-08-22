@@ -37,7 +37,7 @@ class UserListener(tweepy.StreamListener):
             toddler = toddlerify(text)
 
             if status.is_quote_status:
-                toddler += status.quoted_status_permalink['url']
+                toddler += ' ' + status.quoted_status_permalink['url']
 
             print('Tweeting:', toddler)
             api.update_status(toddler)
