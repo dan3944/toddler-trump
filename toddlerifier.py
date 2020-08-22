@@ -29,11 +29,12 @@ class UserListener(tweepy.StreamListener):
         #     print(key, val)
 
         print('\n', text)
+        print('')
     
         if text.startswith('RT @') or is_url(text):
             print('Skipping')
         else:
-            toddler = toddlerify(status.text)
+            toddler = toddlerify(text)
 
             if status.is_quote_status:
                 toddler += status.quoted_status_permalink
