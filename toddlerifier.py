@@ -49,15 +49,19 @@ def is_url(string):
 def toddlerify(string):
     words = string.split()
 
-    if words[0].isupper():
+    if is_tantrum(words[0]):
         toddler = 'MOMMY, ' + string
     else:
         toddler = 'Mommy, ' + string[0].lower() + string[1:]
     
-    if words[-1].isupper() and len(toddler) <= 271:
+    if is_tantrum(words[-1]) and len(toddler) <= 271:
         toddler += ' WAAAHHH!'
 
     return toddler.rstrip()[:280]
+
+
+def is_tantrum(word):
+    return word.isupper() and len(word) > 1
 
 
 if __name__ == '__main__':
