@@ -24,7 +24,7 @@ class UserListener(tweepy.StreamListener):
         if text.startswith('RT @') or is_url(text) or status.in_reply_to_status_id:
             print('Skipping')
         else:
-            toddler = toddlerify(text)
+            toddler = toddlerify(text.strip())
 
             if status.is_quote_status:
                 suffix = ' ' + status.quoted_status_permalink['url']
@@ -40,8 +40,8 @@ class UserListener(tweepy.StreamListener):
 
 def is_url(string):
     try:
-        parsed = urllib.parse.urlparse(string.strip())
-        return parsed.scheme and parsed.netloc and parsed.path
+        parsed = urllib.parse.urlparse(string)
+        return parsed.scheme and parsed.netloc
     except ValueError:
         return False
 
@@ -54,11 +54,11 @@ def toddlerify(string):
         toddler = 'MOMMY, ' + string
     else:
         toddler = 'Mommy, ' + string[0].lower() + string[1:]
-    
+
     if words and words[-1].isupper() and len(toddler) <= 271:
         toddler += ' WAAAHHH!'
 
-    return toddler.rstrip()[:280]
+    return toddler[:280]
 
 
 if __name__ == '__main__':
