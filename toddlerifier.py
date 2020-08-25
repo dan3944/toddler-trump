@@ -1,3 +1,4 @@
+import html
 import os
 import sys
 import tweepy
@@ -19,12 +20,13 @@ class UserListener(tweepy.StreamListener):
             return
 
         text = status.extended_tweet['full_text'] if status.truncated else status.text
+        text = html.unescape(text).strip()
         print('\n', text)
     
         if text.startswith('RT @') or is_url(text) or status.in_reply_to_status_id:
             print('Skipping')
         else:
-            toddler = toddlerify(text.strip())
+            toddler = toddlerify(text)
 
             if status.is_quote_status:
                 suffix = ' ' + status.quoted_status_permalink['url']
@@ -50,12 +52,17 @@ def toddlerify(string):
     words = [word for word in string.split()
              if len(word) >= 2 and word[0] not in ('@', '#')]
 
-    if words and words[0].isupper():
+    if not words:
+        return ('Mommy, ' + string)[:280]
+
+    if words[0].isupper():
         toddler = 'MOMMY, ' + string
+    elif string.startswith('I '):
+        toddler = 'Mommy, ' + string
     else:
         toddler = 'Mommy, ' + string[0].lower() + string[1:]
 
-    if words and words[-1].isupper() and len(toddler) <= 271:
+    if words[-1].isupper() and len(toddler) <= 271:
         toddler += ' WAAAHHH!'
 
     return toddler[:280]
