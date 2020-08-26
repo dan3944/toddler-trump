@@ -6,7 +6,7 @@ import tweepy
 import urllib.parse
 
 logging.basicConfig(level=logging.INFO,
-                    format='%(asctime)s | %(levelname)s: %(message)s',
+                    format='%(asctime)s | %(levelname)s | %(message)s',
                     datefmt='%Y-%d-%m %I:%M:%S %p')
 
 auth = tweepy.OAuthHandler(os.environ['API_KEY'], os.environ['API_KEY_SECRET'])
