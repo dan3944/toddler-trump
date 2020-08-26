@@ -25,7 +25,7 @@ class UserListener(tweepy.StreamListener):
 
         text = status.extended_tweet['full_text'] if status.truncated else status.text
         text = html.unescape(text).strip()
-        logging.info('\n', text)
+        logging.info('\n' + text)
     
         if text.startswith('RT @') or is_url(text) or status.in_reply_to_status_id:
             logging.info('Skipping')
@@ -36,7 +36,7 @@ class UserListener(tweepy.StreamListener):
                 suffix = ' ' + status.quoted_status_permalink['url']
                 toddler = toddler[: 280 - len(suffix)] + suffix
 
-            logging.info('Tweeting:', toddler)
+            logging.info('Tweeting: %s', toddler)
             api.update_status(toddler)
 
     def on_error(self, status_code):
@@ -74,11 +74,11 @@ def toddlerify(string):
 
 if __name__ == '__main__':
     handle = sys.argv[1] if len(sys.argv) >= 2 else 'realDonaldTrump'
-    logging.info('Handle:', handle)
+    logging.info('Handle: %s', handle)
     user_id = api.lookup_users(screen_names=[handle])[0].id_str
 
     while True:
-        logging.info('Starting stream for user_id', user_id)
+        logging.info('Starting stream for user_id %s', user_id)
 
         try:
             tweepy \
