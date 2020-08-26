@@ -25,7 +25,7 @@ class UserListener(tweepy.StreamListener):
 
         text = status.extended_tweet['full_text'] if status.truncated else status.text
         text = html.unescape(text).strip()
-        logging.info('\n' + text)
+        logging.info('Trump tweeted: %s', text)
     
         if text.startswith('RT @') or is_url(text) or status.in_reply_to_status_id:
             logging.info('Skipping')
