@@ -1,9 +1,13 @@
 import html
+import logging
 import os
 import sys
 import tweepy
 import urllib.parse
 
+logging.basicConfig(level=logging.INFO,
+                    format='%(asctime)s | %(levelname)s: %(message)s',
+                    datefmt='%Y-%d-%m %I:%M:%S %p')
 
 auth = tweepy.OAuthHandler(os.environ['API_KEY'], os.environ['API_KEY_SECRET'])
 auth.set_access_token(os.environ['ACCESS_TOKEN'], os.environ['ACCESS_TOKEN_SECRET'])
@@ -21,10 +25,10 @@ class UserListener(tweepy.StreamListener):
 
         text = status.extended_tweet['full_text'] if status.truncated else status.text
         text = html.unescape(text).strip()
-        print('\n', text)
+        logging.info('\n', text)
     
         if text.startswith('RT @') or is_url(text) or status.in_reply_to_status_id:
-            print('Skipping')
+            logging.info('Skipping')
         else:
             toddler = toddlerify(text)
 
@@ -32,11 +36,11 @@ class UserListener(tweepy.StreamListener):
                 suffix = ' ' + status.quoted_status_permalink['url']
                 toddler = toddler[: 280 - len(suffix)] + suffix
 
-            print('Tweeting:', toddler)
+            logging.info('Tweeting:', toddler)
             api.update_status(toddler)
 
     def on_error(self, status_code):
-        print('\n***ERROR: Status Code', status_code)
+        logging.error('Response status code: %s', status_code)
         return True
 
 
@@ -70,15 +74,15 @@ def toddlerify(string):
 
 if __name__ == '__main__':
     handle = sys.argv[1] if len(sys.argv) >= 2 else 'realDonaldTrump'
-    print('Handle:', handle)
+    logging.info('Handle:', handle)
     user_id = api.lookup_users(screen_names=[handle])[0].id_str
 
     while True:
-        print('Starting stream for user_id', user_id)
+        logging.info('Starting stream for user_id', user_id)
 
         try:
             tweepy \
                 .Stream(auth=api.auth, listener=UserListener(handle)) \
                 .filter(follow=[user_id])
         except Exception as e:
-            print('\n***Exception', e)
+            logging.exception('Stream interrupted')
