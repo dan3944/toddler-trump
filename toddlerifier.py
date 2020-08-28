@@ -33,7 +33,7 @@ class UserListener(tweepy.StreamListener):
             toddler = toddlerify(text)
 
             if status.is_quote_status:
-                suffix = ' ' + status.quoted_status_permalink['url']
+                suffix = '\n' + status.quoted_status_permalink['url']
                 toddler = toddler[: 280 - len(suffix)] + suffix
 
             logging.info('Tweet: %s', toddler)
