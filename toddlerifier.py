@@ -36,7 +36,7 @@ class UserListener(tweepy.StreamListener):
                 suffix = ' ' + status.quoted_status_permalink['url']
                 toddler = toddler[: 280 - len(suffix)] + suffix
 
-            logging.info('Tweeting: %s', toddler)
+            logging.info('Tweet: %s', toddler)
             api.update_status(toddler)
 
     def on_error(self, status_code):
@@ -84,5 +84,5 @@ if __name__ == '__main__':
             tweepy \
                 .Stream(auth=api.auth, listener=UserListener(handle)) \
                 .filter(follow=[user_id])
-        except Exception as e:
+        except:
             logging.exception('Stream interrupted')
