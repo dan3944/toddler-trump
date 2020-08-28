@@ -76,13 +76,12 @@ if __name__ == '__main__':
     handle = sys.argv[1] if len(sys.argv) >= 2 else 'realDonaldTrump'
     logging.info('Handle: %s', handle)
     user_id = api.lookup_users(screen_names=[handle])[0].id_str
+    stream = tweepy.Stream(auth=api.auth, listener=UserListener(handle))
 
     while True:
         logging.info('Starting stream for user_id %s', user_id)
 
         try:
-            tweepy \
-                .Stream(auth=api.auth, listener=UserListener(handle)) \
-                .filter(follow=[user_id])
+            stream.filter(follow=[user_id])
         except:
             logging.exception('Stream interrupted')
