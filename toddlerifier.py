@@ -54,7 +54,7 @@ def is_url(string):
 
 def toddlerify(string):
     words = [word for word in string.split()
-             if len(word) >= 2 and word[0] not in ('@', '#')]
+             if len(word) >= 2 and word[0] not in ('@', '#') and not is_url(word)]
 
     if not words:
         return ('Mommy, ' + string)[:280]
