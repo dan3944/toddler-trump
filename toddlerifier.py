@@ -30,6 +30,9 @@ class UserListener(tweepy.StreamListener):
         if text.startswith('RT @') or is_url(text) or status.in_reply_to_status_id:
             logging.info('Skipping')
         else:
+            if text.startswith('.@'):
+                text = text[1:]
+
             toddler = toddlerify(text)
 
             if status.is_quote_status:
