@@ -2,8 +2,10 @@ import html
 import logging
 import os
 import sys
-import tweepy
 import urllib.parse
+
+import nltk
+import tweepy
 
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s | %(levelname)s | %(message)s',
@@ -64,15 +66,21 @@ def toddlerify(string):
 
     if words[0].isupper():
         toddler = 'MOMMY, ' + string
-    elif string.startswith('I '):
-        toddler = 'Mommy, ' + string
-    else:
+    elif should_lowercase(string):
         toddler = 'Mommy, ' + string[0].lower() + string[1:]
+    else:
+        toddler = 'Mommy, ' + string
 
     if words[-1].isupper() and len(toddler) <= 271:
         toddler += ' WAAAHHH!'
 
     return toddler[:280]
+
+
+def should_lowercase(string):
+    starts_with_proper_noun = nltk.pos_tag(string.split())[0][1] in ('NNP', 'NNPS')
+    starts_with_i = string[:2] in ('I ', "I'")
+    return not (starts_with_proper_noun or starts_with_i)
 
 
 if __name__ == '__main__':
