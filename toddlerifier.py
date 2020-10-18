@@ -7,11 +7,11 @@ import urllib.parse
 import nltk
 import tweepy
 
-nltk.download('averaged_perceptron_tagger')
-
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s | %(levelname)s | %(message)s',
                     datefmt='%Y-%m-%d %I:%M:%S %p')
+
+nltk.download('averaged_perceptron_tagger')
 
 auth = tweepy.OAuthHandler(os.environ['API_KEY'], os.environ['API_KEY_SECRET'])
 auth.set_access_token(os.environ['ACCESS_TOKEN'], os.environ['ACCESS_TOKEN_SECRET'])
@@ -38,6 +38,7 @@ class UserListener(tweepy.StreamListener):
                 text = text[1:]
 
             toddler = toddlerify(text)
+            api.update_status(toddler, in_reply_to_status_id=status.id, auto_populate_reply_metadata=True)
 
             if status.is_quote_status:
                 suffix = '\n' + status.quoted_status_permalink['url']
@@ -96,5 +97,7 @@ if __name__ == '__main__':
 
         try:
             stream.filter(follow=[user_id])
+        except KeyboardInterrupt:
+            raise
         except:
             logging.exception('Stream interrupted')
