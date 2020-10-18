@@ -1,4 +1,4 @@
-Inspired by [this tweet](https://twitter.com/bessbell/status/1296121107129360384).
+See me in action [@ToddlerDon](https://twitter.com/ToddlerDon)! Inspired by [this tweet](https://twitter.com/bessbell/status/1296121107129360384).
 
 Prepends `Mommy, ` to the beginning of each of Trump's tweets. If a tweet's last word is in all caps, appends ` WAAAHHH!` to the end.
 
