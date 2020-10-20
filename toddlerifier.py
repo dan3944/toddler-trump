@@ -34,18 +34,10 @@ class UserListener(tweepy.StreamListener):
         if text.startswith('RT @') or is_url(text) or status.in_reply_to_status_id:
             logging.info('Skipping')
         else:
-            if text.startswith('.@'):
-                text = text[1:]
-
             toddler = toddlerify(text)
-            api.update_status(toddler, in_reply_to_status_id=status.id, auto_populate_reply_metadata=True)
-
-            if status.is_quote_status:
-                suffix = '\n' + status.quoted_status_permalink['url']
-                toddler = toddler[: 280 - len(suffix)] + suffix
-
             logging.info('Tweet: %s', toddler)
-            api.update_status(toddler)
+            tweeted = api.update_status(toddler, in_reply_to_status_id=status.id, auto_populate_reply_metadata=True)
+            api.retweet(tweeted.id)
 
     def on_error(self, status_code):
         logging.error('Response status code: %s', status_code)
