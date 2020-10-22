@@ -11,6 +11,7 @@ logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s | %(levelname)s | %(message)s',
                     datefmt='%Y-%m-%d %I:%M:%S %p')
 
+# used to determine if a tweet starts with a proper noun (i.e. should it be lowercased?)
 nltk.download('averaged_perceptron_tagger')
 
 auth = tweepy.OAuthHandler(os.environ['API_KEY'], os.environ['API_KEY_SECRET'])
@@ -30,10 +31,13 @@ class UserListener(tweepy.StreamListener):
         text = status.extended_tweet['full_text'] if status.truncated else status.text
         text = html.unescape(text).strip()
         logging.info('Trump tweeted: %s', text)
-    
+
         if text.startswith('RT @') or is_url(text) or status.in_reply_to_status_id:
             logging.info('Skipping')
         else:
+            if text.startswith('.@'):
+                text = text[1:]
+
             toddler = toddlerify(text)
             logging.info('Tweet: %s', toddler)
             tweeted = api.update_status(toddler, in_reply_to_status_id=status.id, auto_populate_reply_metadata=True)
